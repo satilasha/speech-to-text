@@ -1,0 +1,30 @@
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; 
+}
+
+.sound-wave {
+  width: 150px; 
+  height: 30px; 
+  margin-bottom: 20px; 
+}
+
+.start-button {
+  margin-top: 20px; 
+}
+
+.transcription-box {
+  border: 1px solid #ccc; 
+  padding: 15px; 
+  margin-bottom: 20px;
+   width: 600px;
+  height: 300px;
+  text-align: right; 
+}
+
+.transcription-text {
+  white-space: pre-wrap; /* Preserve line breaks in the text */
+}
