@@ -1,48 +1,86 @@
-import React, { useState, useEffect, useRef  } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ReactMic } from 'react-mic';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import debounce from 'lodash/debounce';
 import './audioRecorder.css';
+import getQuestions from './questions.js'
 
 const AudioRecorder = () => {
   const [isRecording, setRecording] = useState(false);
-  const [transcription, setTranscription] = useState('');
-  
+  const [transcriptions, setTranscriptions] = useState([]);
+  const transcriptionBoxRef = useRef(null);
+
   const timeoutIdRef = useRef(null);
 
   // Debounce the transcribeAudio function
   const debouncedTranscribeAudio = debounce(async (audioBlob) => {
     try {
-      const apiKey = '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';
+      // const apiKey = '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';
 
-      const formData = new FormData();
-      formData.append('file', new File([audioBlob], 'audio.mp3'));
-      formData.append('model', 'whisper-1');
+      // const formData = new FormData();
+      // formData.append('file', new File([audioBlob], 'audio.mp3'));
+      // formData.append('model', 'whisper-1');
 
-      const headers = {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'multipart/form-data',
-      };
+      // const headers = {
+      //   'Authorization': `Bearer ${apiKey}`,
+      //   'Content-Type': 'multipart/form-data',
+      // };
 
-      const response = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, { headers });
-      const transcriptionText = response.data.text;
+      // const response = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, { headers });
+      const transcriptionText = "response.data.text";
 
-      // Append the new transcription to the existing text
-      setTranscription((prevTranscription) => prevTranscription + '\n' + transcriptionText);
+      setTranscriptions((prevTranscriptions) => [
+        ...prevTranscriptions,
+        {
+          text: transcriptionText,
+          isApiResponse: false,
+        },
+      ]);
+
+      setTimeout(async () => {
+        try {
+          const questionsResponse = await getQuestions(transcriptionText);
+          setTranscriptions((prevTranscriptions) => [
+            ...prevTranscriptions,
+            {
+              text: questionsResponse,
+              isApiResponse: true,
+            },
+          ]);
+        } catch (error) {
+          console.error('Error processing questions response', error);
+        }
+      }, 2000);
+
+
     } catch (error) {
       console.error('Error transcribing audio', error);
     }
-  }, 500); // Adjust the debounce time as needed
+  }, 100);
 
   const onData = (recordedBlob) => {
     debouncedTranscribeAudio(recordedBlob.blob);
   };
 
   useEffect(() => {
-    // Cleanup function to clear the timeout when the component unmounts or when isRecording changes
-    return () => clearTimeout(timeoutIdRef.current);
+    // Add an initial transcription entry after 2 seconds
+    const initialTranscriptionTimeout = setTimeout(() => {
+      setTranscriptions([
+        {
+          text: "Hey, Which Life Event do you want to Perform today ? Marriage or Death",
+          isApiResponse: true,
+        },
+      ]);
+    }, 3000);
+
+    return () => clearTimeout(initialTranscriptionTimeout);
   }, []);
 
+  useEffect(() => {
+    return () => clearTimeout(timeoutIdRef.current);
+  }, []);
 
   useEffect(() => {
     if (isRecording) {
@@ -59,10 +97,27 @@ const AudioRecorder = () => {
     }, 3000);
   };
 
+  useEffect(() => {
+    if (transcriptionBoxRef.current) {
+      transcriptionBoxRef.current.scrollTop = transcriptionBoxRef.current.scrollHeight;
+    }
+  }, [transcriptions]);
+
   return (
     <div className="center-container">
-      <div className="transcription-box">
-        <div className="transcription-text">{transcription}</div>
+      <div className="life-event-text">
+        <h2>Life Event</h2>
+      </div>
+      <div className="transcription-box" ref={transcriptionBoxRef}>
+        {transcriptions.map((entry, index) => (
+          <div
+            key={index}
+            className={`transcription-text-box ${entry.isApiResponse ? 'api-response-box' : 'whisper-response-box'
+              }`}
+          >
+            {entry.text}
+          </div>
+        ))}
       </div>
 
       <ReactMic
@@ -74,8 +129,13 @@ const AudioRecorder = () => {
         backgroundColor="#FF4081"
       />
 
-      <button onClick={() => setRecording(true)} className="start-button" type="button">
-        Start Recording
+      {/* Microphone icon button using FontAwesome */}
+      <button onClick={() => setRecording(!isRecording)} className="mic-button" type="button">
+        <FontAwesomeIcon
+          icon={isRecording ? faMicrophone : faMicrophoneSlash}
+          size="2x"
+          className={isRecording ? 'mic-icon-active' : 'mic-icon-inactive'}
+        />
       </button>
     </div>
   );

@@ -4,7 +4,6 @@ import AudioRecorder from './audioRecorder';
 const App = () => {
   return (
     <div>
-      <h1>Audio Recorder App</h1>
       <AudioRecorder />
     </div>
   );

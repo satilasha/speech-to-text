@@ -1,30 +1,66 @@
 .center-container {
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh; 
+  height: 100vh;
 }
 
 .sound-wave {
-  width: 150px; 
-  height: 30px; 
-  margin-bottom: 20px; 
+  width: 150px;
+  height: 30px;
+  margin-bottom: 20px;
 }
 
 .start-button {
-  margin-top: 20px; 
+  margin-top: 20px;
 }
 
 .transcription-box {
-  border: 1px solid #ccc; 
-  padding: 15px; 
+  border-radius: 20px;
+  border: 3px solid #ccc;
+  padding: 25px;
   margin-bottom: 20px;
-   width: 600px;
+  width: 600px;
   height: 300px;
-  text-align: right; 
+  text-align: right;
+  overflow-y: auto;
+  overflow: hidden;
 }
 
 .transcription-text {
-  white-space: pre-wrap; /* Preserve line breaks in the text */
+  white-space: pre-wrap;
+}
+
+.transcription-text-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  background-color: #b6f196;
+  overflow-wrap: break-word;
+  word-wrap: break-word
+}
+
+.mic-button {
+  background: none;
+  border: none;
+}
+
+.mic-icon-active {
+  color: #00ff00;
+}
+
+.mic-icon-inactive {
+  color: #ff0000;
+}
+
+.whisper-response-box {
+  background-color: #e0e2e2;
+  text-align: right;
+}
+
+.api-response-box {
+  text-align: left;
 }
