@@ -6,6 +6,7 @@ import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-ico
 import debounce from 'lodash/debounce';
 import './audioRecorder.css';
 import getQuestions from './questions.js'
+const apiKey = '//add yout api key';
 
 const AudioRecorder = () => {
   const [isRecording, setRecording] = useState(false);
@@ -17,19 +18,18 @@ const AudioRecorder = () => {
   // Debounce the transcribeAudio function
   const debouncedTranscribeAudio = debounce(async (audioBlob) => {
     try {
-      // const apiKey = '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';
 
-      // const formData = new FormData();
-      // formData.append('file', new File([audioBlob], 'audio.mp3'));
-      // formData.append('model', 'whisper-1');
+      const formData = new FormData();
+      formData.append('file', new File([audioBlob], 'audio.mp3'));
+      formData.append('model', 'whisper-1');
 
-      // const headers = {
-      //   'Authorization': `Bearer ${apiKey}`,
-      //   'Content-Type': 'multipart/form-data',
-      // };
+      const headers = {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'multipart/form-data',
+      };
 
-      // const response = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, { headers });
-      const transcriptionText = "response.data.text";
+      const response = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, { headers });
+      const transcriptionText = response.data.text;
 
       setTranscriptions((prevTranscriptions) => [
         ...prevTranscriptions,
@@ -65,7 +65,6 @@ const AudioRecorder = () => {
   };
 
   useEffect(() => {
-    // Add an initial transcription entry after 2 seconds
     const initialTranscriptionTimeout = setTimeout(() => {
       setTranscriptions([
         {

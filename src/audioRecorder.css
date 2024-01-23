@@ -25,8 +25,7 @@
   width: 600px;
   height: 300px;
   text-align: right;
-  overflow-y: auto;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .transcription-text {
