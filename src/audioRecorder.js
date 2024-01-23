@@ -5,8 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import debounce from 'lodash/debounce';
 import './audioRecorder.css';
-import getQuestions from './questions.js'
-const apiKey = '//add yout api key';
+import { initiateConversation, updateEvent }from './questions.js'
+const apiKey = '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';
 
 const AudioRecorder = () => {
   const [isRecording, setRecording] = useState(false);
@@ -41,7 +41,7 @@ const AudioRecorder = () => {
 
       setTimeout(async () => {
         try {
-          const questionsResponse = await getQuestions(transcriptionText);
+          const questionsResponse = await updateEvent(transcriptionText);
           setTranscriptions((prevTranscriptions) => [
             ...prevTranscriptions,
             {
@@ -65,10 +65,11 @@ const AudioRecorder = () => {
   };
 
   useEffect(() => {
-    const initialTranscriptionTimeout = setTimeout(() => {
+    const initialTranscriptionTimeout = setTimeout(async () => {
+      const response = await initiateConversation();
       setTranscriptions([
         {
-          text: "Hey, Which Life Event do you want to Perform today ? Marriage or Death",
+          text: response.message,
           isApiResponse: true,
         },
       ]);
